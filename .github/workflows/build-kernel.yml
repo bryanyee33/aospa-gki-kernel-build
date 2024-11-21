@@ -32,6 +32,7 @@ jobs:
           HOME="$(pwd)"
           rm -r susfs4ksu
           git clone https://gitlab.com/simonpunk/susfs4ksu.git
+          cd susfs4ksu
           git checkout gki-android12-5.10
           git checkout HEAD~4
           git status
