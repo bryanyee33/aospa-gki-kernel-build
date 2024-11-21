@@ -26,10 +26,16 @@ jobs:
         run: |
           cd kernel_platform/xiaomi/sm8450
           rmdir KernelSU
-          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -
+          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s v1.0.1
       - name: Include SUS-FS
         run: |
           HOME="$(pwd)"
+          rm -r susfs4ksu
+          git clone https://gitlab.com/simonpunk/susfs4ksu.git
+          git checkout gki-android12-5.10
+          git checkout HEAD~4
+          git status
+          git log
           cp -r susfs4ksu/kernel_patches/* kernel_platform/xiaomi/sm8450
           cd kernel_platform/xiaomi/sm8450/KernelSU
           patch -p1 < 10_enable_susfs_for_ksu.patch
