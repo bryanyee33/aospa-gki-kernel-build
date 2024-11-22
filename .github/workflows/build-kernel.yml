@@ -35,6 +35,7 @@ jobs:
           cd susfs4ksu
           git checkout gki-android12-5.10
           git checkout HEAD~4
+          cd ..
           cp -r susfs4ksu/kernel_patches/* kernel_platform/xiaomi/sm8450
           cd kernel_platform/xiaomi/sm8450/KernelSU
           patch -p1 < 10_enable_susfs_for_ksu.patch
