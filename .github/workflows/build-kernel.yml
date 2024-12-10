@@ -26,7 +26,18 @@ jobs:
         run: |
           cd kernel_platform/xiaomi/sm8450
           rmdir KernelSU
-          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -
+          curl -LSs "https://raw.githubusercontent.com/bryanyee33/aospa-gki-kernel-build/test/setup.sh" | bash -s main
+      - name: Include SUS-FS
+        run: |
+          HOME="$(pwd)"
+          cp -r susfs4ksu/kernel_patches/* kernel_platform/xiaomi/sm8450
+          cd kernel_platform/xiaomi/sm8450/KernelSU
+          patch -p1 < 10_enable_susfs_for_ksu.patch
+          cd ..
+          patch -p1 < 50_add_susfs_in_gki-android12-5.10.patch
+          cd $HOME/susfs4ksu
+          ./build_ksu_module.sh
+          mv ksu_module_susfs.zip ..
       - name: Build kernel
         run: |
           cd kernel_platform/xiaomi/sm8450
@@ -48,4 +59,5 @@ jobs:
           tag_name: ${{ steps.tag.outputs.release_tag }}
           files: |
             marble-kernel.zip
+            ksu_module_susfs.zip
           # blobs.zip
