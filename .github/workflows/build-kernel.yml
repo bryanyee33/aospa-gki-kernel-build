@@ -1,6 +1,8 @@
 name: build-kernel
 on:
   workflow_dispatch:
+env:
+  CLANG_DIR: clang-r522817
 jobs:
   build-ksu:
     runs-on: ubuntu-22.04
@@ -35,6 +37,15 @@ jobs:
           repo init -u https://github.com/bryanyee33/kernel_manifest -b uvite-xiaomi-sm8450 --depth=1
           repo sync
           mkdir -p kernel_platform/device/xiaomi/marble-kernel/dtbs
+      - name: Setup clang
+      # git clone --filter & git sparse-checkout to only download required directory
+        run: |
+          mkdir -p kernel_platform/clang
+          cd kernel_platform/clang
+          git clone -n --depth=1 --filter=tree:0 -b main-kernel --single-branch \
+              https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86 .
+          git sparse-checkout set --no-cone "/$CLANG_DIR"
+          git checkout
       - name: Include KSU
         run: |
           cd kernel_platform/xiaomi/sm8450
