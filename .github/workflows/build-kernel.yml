@@ -2,7 +2,7 @@ name: build-kernel
 on:
   workflow_dispatch:
 env:
-  CLANG_DIR: clang-r563880
+  CLANG_DIR: clang-r563880b
 jobs:
   build-ksu:
     runs-on: ubuntu-22.04
@@ -37,10 +37,6 @@ jobs:
           repo init -u https://github.com/bryanyee33/kernel_manifest -b uvite-xiaomi-sm8450 --depth=1
           repo sync
           mkdir -p kernel_platform/device/xiaomi/marble-kernel/dtbs
-      - name: Setup merge_dtbs.py
-        run: |
-          git clone -b lineage-22.2 --depth=1 https://github.com/LineageOS/android_vendor_lineage.git
-          mv android_vendor_lineage/build/tools/merge_dtbs.py kernel_platform/build/android
       - name: Setup clang
       # git clone --filter & git sparse-checkout to only download required directory
         run: |
