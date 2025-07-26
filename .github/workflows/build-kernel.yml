@@ -74,12 +74,25 @@ jobs:
           ./build.sh marble
       - name: Zip output
         run: |
-          cp kernel_platform/device/xiaomi/marble-kernel/Image AnyKernel3
-          cd AnyKernel3
+          git clone --depth=1 -b marble https://github.com/bryanyee33/AnyKernel3.git AnyKernel3-marble
+          cd AnyKernel3-marble
+          cp ../kernel_platform/device/xiaomi/marble-kernel/Image .
           rm -r .git README.md
           find . -type f -name 'placeholder' -delete
           find . -type d -empty -delete
           zip -r9 "../marble-kernel.zip" *
+
+          cd ..
+          git clone --depth=1 -b pzqqt https://github.com/bryanyee33/AnyKernel3.git AnyKernel3-pzqqt
+          cd AnyKernel3-pzqqt
+          cp ../kernel_platform/device/xiaomi/marble-kernel/Image .
+          cp ../kernel_platform/device/xiaomi/marble-kernel/dtbs/dtbo.img .
+          cp ../kernel_platform/device/xiaomi/marble-kernel/dtbs/ukee.dtb ./dtb
+          cp -r ../kernel_platform/device/xiaomi/marble-kernel/vendor_dlkm ./_vendor_dlkm_modules
+          cp -r ../kernel_platform/device/xiaomi/marble-kernel/vendor_ramdisk ./_vendor_boot_modules
+          rm -r .git README.md
+          find . -type f -name 'placeholder' -delete
+          find . -type d -empty -delete
       - name: Generate release tag
         id: tag
         run: echo "release_tag=AOSPA_KSU_GKI_$(date +'%Y.%m.%d')" >> "$GITHUB_OUTPUT"
@@ -94,9 +107,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: marble-kernel
-          path: AnyKernel3/*
+          path: AnyKernel3-marble/*
       - name: Upload blobs artifact
         uses: actions/upload-artifact@v4
         with:
-          name: blobs
-          path: kernel_platform/device/xiaomi/marble-kernel/*
+          name: marble-kernel-blobs
+          path: AnyKernel3-pzqqt/*
