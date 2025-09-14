@@ -102,14 +102,21 @@ jobs:
           tag_name: ${{ steps.tag.outputs.release_tag }}
           files: |
             marble-kernel.zip
-            ksu_module_susfs.zip
+      - name: Upload ksu_module_susfs artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ksu_module_susfs
+          path: susfs4ksu/ksu_module_susfs/*
+          compression-level: 9
       - name: Upload marble-kernel artifact
         uses: actions/upload-artifact@v4
         with:
           name: marble-kernel
           path: AnyKernel3-marble/*
+          compression-level: 9
       - name: Upload blobs artifact
         uses: actions/upload-artifact@v4
         with:
           name: marble-kernel-blobs
           path: AnyKernel3-pzqqt/*
+          compression-level: 9
