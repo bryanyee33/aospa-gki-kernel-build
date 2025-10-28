@@ -2,7 +2,7 @@ name: build-kernel
 on:
   workflow_dispatch:
 env:
-  CLANG_DIR: clang-r563880b
+  CLANG_DIR: clang-r574158
 jobs:
   build-ksu:
     runs-on: ubuntu-22.04
