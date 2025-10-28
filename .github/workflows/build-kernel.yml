@@ -50,14 +50,14 @@ jobs:
         run: |
           cd kernel_platform/xiaomi/sm8450
           rmdir KernelSU
-          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main
+          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s 37ef0d27067d3d7e7bf07a80547a1949864789c4
       - name: Include SUS-FS
         run: |
           HOME="$(pwd)"
           rm -r susfs4ksu
           git clone https://gitlab.com/simonpunk/susfs4ksu.git -b gki-android12-5.10
           cd susfs4ksu
-          git checkout 45caf70a7091f146e66f23e13f12074368c15297
+          git checkout 868eb5203286864857d3fd154b07738899131207
           cd ..
           cp -r susfs4ksu/kernel_patches/* kernel_platform/xiaomi/sm8450
           cd kernel_platform/xiaomi/sm8450/KernelSU
