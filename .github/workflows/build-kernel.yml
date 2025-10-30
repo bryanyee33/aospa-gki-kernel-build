@@ -57,7 +57,7 @@ jobs:
           rm -r susfs4ksu
           git clone https://gitlab.com/simonpunk/susfs4ksu.git -b gki-android12-5.10
           cd susfs4ksu
-          git checkout fcc2d738562b719c64cfd7c73ee819bba32155e1
+          git checkout 0ed20c1656af7806a1760837ad320e62a8fb40fd
           cd ..
           cp -r susfs4ksu/kernel_patches/* kernel_platform/xiaomi/sm8450
           cd kernel_platform/xiaomi/sm8450/KernelSU
