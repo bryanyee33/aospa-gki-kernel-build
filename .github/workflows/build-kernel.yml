@@ -56,6 +56,24 @@ jobs:
           HOME="$(pwd)"
           cp -r susfs4ksu/kernel_patches/* kernel_platform/xiaomi/sm8450
           cd kernel_platform/xiaomi/sm8450/KernelSU
+
+          perl -0777 -i -pe 's/\+	if \(!ksu_module_mounted\) {
+          \+		return 0;
+          \+	}
+          \+
+          //g;
+          s/\+	susfs_try_umount_all\(new_uid.val\);
+          /\+	if \(ksu_module_mounted\) {
+          +		susfs_try_umount_all\(new_uid.val\);	
+          +	}
+          /g;
+          s/\+	susfs_reorder_mnt_id\(\);
+          /\+	if \(ksu_module_mounted\) {
+          +		susfs_reorder_mnt_id\(\);
+          +	}
+          /g' 10_enable_susfs_for_ksu.patch
+
+          cp 10_enable_susfs_for_ksu.patch $HOME/susfs4ksu/ksu_module_susfs 
           patch -p1 < 10_enable_susfs_for_ksu.patch
           cd ..
           sed -i 's/if (!susfs_is_boot_completed_triggered && mnt->/if (mnt->/g' 50_add_susfs_in_gki-android12-5.10.patch
