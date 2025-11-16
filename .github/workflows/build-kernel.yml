@@ -50,31 +50,12 @@ jobs:
         run: |
           cd kernel_platform/xiaomi/sm8450
           rmdir KernelSU
-          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s 0390ef5dd73252115e486d3301f9b3234ebf46aa
+          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main
       - name: Include SUS-FS
         run: |
           HOME="$(pwd)"
           cp -r susfs4ksu/kernel_patches/* kernel_platform/xiaomi/sm8450
           cd kernel_platform/xiaomi/sm8450/KernelSU
-
-          : # Allow most susfs features to work with moduleless
-          perl -0777 -i -pe 's/\+	if \(!ksu_module_mounted\) {
-          \+		return 0;
-          \+	}
-          \+
-          //g;
-          s/\+	susfs_try_umount_all\(new_uid.val\);
-          /\+	if \(ksu_module_mounted\) {
-          +		susfs_try_umount_all\(new_uid.val\);	
-          +	}
-          /g;
-          s/\+	susfs_reorder_mnt_id\(\);
-          /\+	if \(ksu_module_mounted\) {
-          +		susfs_reorder_mnt_id\(\);
-          +	}
-          /g' 10_enable_susfs_for_ksu.patch
-
-          cp 10_enable_susfs_for_ksu.patch $HOME/susfs4ksu/ksu_module_susfs 
           patch -p1 < 10_enable_susfs_for_ksu.patch
           cd ..
 
