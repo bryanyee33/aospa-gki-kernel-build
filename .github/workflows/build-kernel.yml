@@ -120,15 +120,6 @@ jobs:
           rm -r .git README.md
           find . -type f -name 'placeholder' -delete
           find . -type d -empty -delete
-      - name: Generate release tag
-        id: tag
-        run: echo "release_tag=AOSPA_KSU_GKI_$(date +'%Y.%m.%d')" >> "$GITHUB_OUTPUT"
-      - name: Create Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.tag.outputs.release_tag }}
-          files: |
-            marble-kernel.zip
       - name: Upload ksu_module_susfs artifact
         uses: actions/upload-artifact@v4
         with:
