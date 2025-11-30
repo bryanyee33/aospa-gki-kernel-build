@@ -22,6 +22,9 @@ jobs:
         uses: pierotofy/set-swap-space@master
         with:
           swap-size-gb: 7
+      - uses: actions/checkout@v6
+        with:
+          path: aospa-gki-kernel-build
       - name: Setup Python
         uses: actions/setup-python@v5 
         with:
@@ -34,14 +37,15 @@ jobs:
           sudo chmod a+rx /usr/local/bin/repo
       - name: Clone repo and sync
         run: |
-          repo init -u https://github.com/bryanyee33/aospa-gki-kernel-build -b main -m manifest.xml --depth=1
+          repo init -u https://github.com/bryanyee33/aospa-gki-kernel-build -b "$(git -C aospa-gki-kernel-build branch --show-current)" -m manifest.xml --depth=1
           repo sync
           mkdir -p kernel_platform/device/xiaomi/marble-kernel/dtbs
       - name: Setup clang
-      # git clone --filter & git sparse-checkout to only download required directory
         run: |
           mkdir -p kernel_platform/clang
           cd kernel_platform/clang
+
+          : # git clone --filter & git sparse-checkout to only download required directory
           git clone -n --depth=1 --filter=tree:0 -b main-kernel --single-branch \
               https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86 .
           git sparse-checkout set --no-cone "/$CLANG_DIR"
@@ -51,7 +55,7 @@ jobs:
           cd kernel_platform/xiaomi/sm8450
           rmdir KernelSU
           curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main
-      - name: Include SUS-FS
+      - name: Include SUSFS
         run: |
           HOME="$(pwd)"
           cp -r susfs4ksu/kernel_patches/* kernel_platform/xiaomi/sm8450
@@ -68,9 +72,17 @@ jobs:
       - name: Include other KSU manager signatures
         run: |
           sed -i '/return (check_v2_signature(path, EXPECTED_SIZE, EXPECTED_HASH) ||/a\
-              check_v2_signature(path, 0x363, "4359c171f32543394cbc23ef908c4bb94cad7c8087002ba164c8230948c21549") /*dummy.keystore*/ || \
+              check_v2_signature(path, 0x363, "4359c171f32543394cbc23ef908c4bb94cad7c8087002ba164c8230948c21549") /*backslashxx*/ || \
               check_v2_signature(path, 0x3e6, "79e590113c4c4c0c222978e413a5faa801666957b1212a328e46c00c69821bf7") /*KernelSU-Next*/ || \
               \' kernel_platform/xiaomi/sm8450/KernelSU/kernel/apk_sign.c
+      - name: Include personal changes
+        run: |
+          cp -rf aospa-gki-kernel-build/android_kernel_xiaomi_sm8450/. kernel_platform/xiaomi/sm8450
+
+          : # Fix clang 19 warnings
+          cd kernel_platform/xiaomi/sm8450
+          curl https://github.com/LineageOS/android_kernel_xiaomi_sm8450/commit/172b68ec702573ca1eef912e06ffdeb32f9c01ac.patch | git apply
+          curl https://github.com/LineageOS/android_kernel_xiaomi_sm8450/commit/aea66fe46a3d796d4f85c5979678055438185cbd.patch | git apply
       - name: Build kernel
         run: |
           cd kernel_platform/xiaomi/sm8450

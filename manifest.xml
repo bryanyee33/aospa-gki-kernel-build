@@ -7,7 +7,7 @@
   <default remote="clo" revision="kernel.build.lnx.1.0" sync-j="8"/>
   <project name="pa-gr/android_kernel_build" path="kernel_platform/build" revision="uvite-xiaomi-sm8450" remote="github"/>
   <project name="pa-gr/android_kernel_prebuilts_build-tools" path="kernel_platform/prebuilts/kernel-build-tools" revision="uvite-xiaomi-sm8450" remote="github"/>
-  <project name="bryanyee33/android_kernel_xiaomi_sm8450" path="kernel_platform/xiaomi/sm8450" revision="vauxite" remote="github"/>
+  <project name="pa-gr/android_kernel_xiaomi_sm8450" path="kernel_platform/xiaomi/sm8450" revision="vauxite" remote="github"/>
   <project name="pa-gr/android_kernel_xiaomi_sm8450-devicetrees" path="kernel_platform/xiaomi/sm8450-devicetrees" revision="vauxite" remote="github"/>
   <project name="pa-gr/android_kernel_xiaomi_sm8450-modules" path="kernel_platform/xiaomi/sm8450-modules" revision="vauxite" remote="github"/>
   <project name="simonpunk/susfs4ksu" path="susfs4ksu" revision="gki-android12-5.10" remote="gitlab"/>
