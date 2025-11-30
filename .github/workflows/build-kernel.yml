@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Free Disk Space (Ubuntu)
-        if: ${{ false }} # Set to true if space insufficient
+        if: ${{ true }} # Set to true if space insufficient
         uses: jlumbroso/free-disk-space@main
         with:
           tool-cache: true
@@ -21,7 +21,7 @@ jobs:
       - name: Set Swap Space
         uses: pierotofy/set-swap-space@master
         with:
-          swap-size-gb: 7
+          swap-size-gb: 16
       - uses: actions/checkout@v6
         with:
           path: aospa-gki-kernel-build
@@ -78,11 +78,23 @@ jobs:
       - name: Include personal changes
         run: |
           cp -rf aospa-gki-kernel-build/android_kernel_xiaomi_sm8450/. kernel_platform/xiaomi/sm8450
+          cd kernel_platform/xiaomi/sm8450
 
           : # Fix clang 19 warnings
-          cd kernel_platform/xiaomi/sm8450
           curl https://github.com/LineageOS/android_kernel_xiaomi_sm8450/commit/172b68ec702573ca1eef912e06ffdeb32f9c01ac.patch | git apply
           curl https://github.com/LineageOS/android_kernel_xiaomi_sm8450/commit/aea66fe46a3d796d4f85c5979678055438185cbd.patch | git apply
+
+          : # Fix clang 21 warnings
+          curl https://github.com/Pzqqt/android_kernel_xiaomi_marble/commit/f4ae922da12b91d0b7a8109ba2851a44c61b0ba6.patch | git apply
+          cd ..
+          curl https://github.com/Pzqqt/android_kernel_xiaomi_marble/commit/f61c4b97ea8dfa65cce74c41a281dc8086e10ee6.patch > clang.patch
+          sed -i 's/drivers\/staging/sm8450-modules\/qcom\/opensource\/wlan/g' clang.patch
+          patch -p1 < clang.patch
+          curl https://github.com/Pzqqt/android_kernel_xiaomi_marble/commit/3e043c16430a95f6d328f5396c14ec18a52ab10a.patch > clang.patch
+          sed -i 's/drivers/sm8450\/drivers/g' clang.patch
+          sed -i 's/techpack\/display/sm8450-modules\/qcom\/opensource\/display-drivers/g' clang.patch
+          patch -p1 < clang.patch
+
       - name: Build kernel
         run: |
           cd kernel_platform/xiaomi/sm8450
