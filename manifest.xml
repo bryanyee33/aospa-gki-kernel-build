@@ -10,7 +10,6 @@
   <project name="pa-gr/android_kernel_xiaomi_sm8450" path="kernel_platform/xiaomi/sm8450" revision="vauxite" remote="github"/>
   <project name="pa-gr/android_kernel_xiaomi_sm8450-devicetrees" path="kernel_platform/xiaomi/sm8450-devicetrees" revision="vauxite" remote="github"/>
   <project name="pa-gr/android_kernel_xiaomi_sm8450-modules" path="kernel_platform/xiaomi/sm8450-modules" revision="vauxite-staging" remote="github"/>
-  <project name="simonpunk/susfs4ksu" path="susfs4ksu" revision="gki-android12-5.10" remote="gitlab"/>
   <project name="kernel_platform/external/dtc" revision="refs/heads/kernel.build.lnx.1.0.r1-rel"/>
   <project name="kernel_platform/prebuilts/build-tools" revision="refs/heads/ks-kernel.lnx.1.0.r1-rel"/>
   <project name="kernel_platform/system/tools/mkbootimg" path="kernel_platform/tools/mkbootimg" revision="refs/heads/ks-kernel.lnx.1.0.r1-rel"/>
