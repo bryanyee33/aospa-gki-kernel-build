@@ -62,9 +62,6 @@ jobs:
           cd kernel_platform/xiaomi/sm8450/KernelSU
           patch -p1 < 10_enable_susfs_for_ksu.patch
           cd ..
-
-          : # Fix sus mount not triggering after boot completed
-          sed -i 's/if (susfs_is_boot_completed_triggered)/if (false)/g' 50_add_susfs_in_gki-android12-5.10.patch
           patch -p1 < 50_add_susfs_in_gki-android12-5.10.patch
           cd $HOME/susfs4ksu
           ./build_ksu_module.sh
