@@ -111,9 +111,10 @@ jobs:
         id: tag
         run: echo "release_tag=AOSPA_KSU_GKI_$(date +'%Y.%m.%d')" >> "$GITHUB_OUTPUT"
       - name: Create Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ steps.tag.outputs.release_tag }}
+          prerelease: true
           files: |
             marble-kernel.zip
       - name: Upload ksu_module_susfs artifact
