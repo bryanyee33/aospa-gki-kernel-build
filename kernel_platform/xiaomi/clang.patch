@@ -2,13 +2,18 @@ Based on commits:
 https://github.com/LineageOS/android_kernel_xiaomi_sm8450/commit/aea66fe46a3d796d4f85c5979678055438185cbd
 https://github.com/Pzqqt/android_kernel_xiaomi_marble/commit/f4ae922da12b91d0b7a8109ba2851a44c61b0ba6
 https://github.com/Pzqqt/android_kernel_xiaomi_marble/commit/3e043c16430a95f6d328f5396c14ec18a52ab10a
+https://github.com/Pzqqt/android_kernel_xiaomi_marble/commit/518a896d8c0244e3f106e971373b6931135e422f
 
 ---
- sm8450/arch/arm64/kvm/Makefile                                       | 4 ++++
- sm8450/drivers/mtd/mtdoops.c                                         | 4 ++--
- sm8450-modules/qcom/opensource/display-drivers/msm/sde/sde_encoder.c | 2 +-
- sm8450-modules/qcom/opensource/display-drivers/msm/sde/sde_rm.c      | 2 +-
- 4 files changed, 8 insertions(+), 4 deletions(-)
+ sm8450/arch/arm64/kvm/Makefile                                                            | 4 ++++
+ sm8450/drivers/mtd/mtdoops.c                                                              | 4 ++--
+ sm8450-modules/qcom/opensource/display-drivers/msm/sde/sde_encoder.c                      | 2 +-
+ sm8450-modules/qcom/opensource/display-drivers/msm/sde/sde_rm.c                           | 2 +-
+ sm8450/drivers/input/touchscreen/goodix_9916r/goodix_ts_inspect.c                         | 2 ++
+ sm8450/lib/lz4/lz4hc.c                                                                    | 4 ++++
+ sm8450-modules/qcom/opensource/video-driver/driver/variant/ar50lt/inc/hfi_buffer_ar50lt.h | 1 +
+ sm8450-modules/qcom/opensource/video-driver/driver/variant/iris2/inc/hfi_buffer_iris2.h   | 1 +
+ 8 files changed, 16 insertions(+), 4 deletions(-)
 
 diff --git a/sm8450/arch/arm64/kvm/Makefile b/sm8450/arch/arm64/kvm/Makefile
 index 749a0986a9e3..2b024670b755 100644
@@ -26,7 +31,7 @@ index 749a0986a9e3..2b024670b755 100644
  
  obj-$(CONFIG_KVM) += kvm.o
 diff --git a/sm8450/drivers/mtd/mtdoops.c b/sm8450/drivers/mtd/mtdoops.c
-index ebe9129d06b4..6a661c54b016 100644
+index ebe9129d06b4..d41eb0a5e5f4 100644
 --- a/sm8450/drivers/mtd/mtdoops.c
 +++ b/sm8450/drivers/mtd/mtdoops.c
 @@ -412,7 +412,7 @@ static void mtdoops_do_dump(struct kmsg_dumper *dumper,
@@ -43,7 +48,7 @@ index ebe9129d06b4..6a661c54b016 100644
  
  	/* Panics must be written immediately */
 -	if (reason == KMSG_DUMP_OOPS || reason == KMSG_DUMP_PANIC) {
-+	if (reason == MTD_DUMP_OOPS || reason == KMSG_DUMP_PANIC) {
++	if (reason == MTD_DUMP_OOPS || reason == MTD_DUMP_PANIC) {
  		mtdoops_write(cxt, 1);
  	} else {
  		/* For other cases, schedule work to write it "nicely" */
@@ -64,7 +69,7 @@ diff --git a/sm8450-modules/qcom/opensource/display-drivers/msm/sde/sde_rm.c b/s
 index dd20d770c0..22701a362c 100644
 --- a/sm8450-modules/qcom/opensource/display-drivers/msm/sde/sde_rm.c
 +++ b/sm8450-modules/qcom/opensource/display-drivers/msm/sde/sde_rm.c
-@@ -1112,7 +1112,7 @@ static bool _sde_rm_check_lm_and_get_connected_blks(
+@@ -1112,6 +1112,6 @@ static bool _sde_rm_check_lm_and_get_connected_blks(
  		u32 conn_lm_mask)
  {
  	const struct sde_lm_cfg *lm_cfg = to_sde_hw_mixer(lm->hw)->cap;
@@ -72,6 +77,56 @@ index dd20d770c0..22701a362c 100644
 +	const struct sde_pingpong_cfg *pp_cfg = NULL;
  	bool ret, is_conn_primary, is_conn_secondary;
  	u32 lm_primary_pref, lm_secondary_pref, cwb_pref, dcwb_pref;
+diff --git a/sm8450/drivers/input/touchscreen/goodix_9916r/goodix_ts_inspect.c b/sm8450/drivers/input/touchscreen/goodix_9916r/goodix_ts_inspect.c
+index 8dbef583f07a..9dc83ec33b87 100644
+--- a/sm8450/drivers/input/touchscreen/goodix_9916r/goodix_ts_inspect.c
++++ b/sm8450/drivers/input/touchscreen/goodix_9916r/goodix_ts_inspect.c
+@@ -129,5 +129,7 @@
+ #define ABS(val)			((val < 0)? -(val) : val)
++#ifndef MAX
+ #define MAX(a, b)			((a > b)? a : b)
++#endif
  
+ static bool module_initialized;
+ static struct seq_file *g_seq;
+diff --git a/sm8450/lib/lz4/lz4hc.c b/sm8450/lib/lz4/lz4hc.c
+index ba8efff7dd67..16400a85a971 100644
+--- a/sm8450/lib/lz4/lz4hc.c
++++ b/sm8450/lib/lz4/lz4hc.c
+@@ -79,6 +79,10 @@ typedef enum { noDictCtx, usingDictCtxHc } dictCtx_directive;
+ /*===   Macros   ===*/
++#ifndef MIN
+ #define MIN(a,b)   ( (a) < (b) ? (a) : (b) )
++#endif
++#ifndef MAX
+ #define MAX(a,b)   ( (a) > (b) ? (a) : (b) )
++#endif
+ 
+ 
+ /*===   Levels definition   ===*/
+diff --git a/sm8450-modules/qcom/opensource/video-driver/driver/variant/ar50lt/inc/hfi_buffer_ar50lt.h b/sm8450-modules/qcom/opensource/video-driver/driver/variant/ar50lt/inc/hfi_buffer_ar50lt.h
+index baaebc65b2f6e..b2beb192f0c82 100644
+--- a/sm8450-modules/qcom/opensource/video-driver/driver/variant/ar50lt/inc/hfi_buffer_ar50lt.h
++++ b/sm8450-modules/qcom/opensource/video-driver/driver/variant/ar50lt/inc/hfi_buffer_ar50lt.h
+@@ -7,6 +7,7 @@
+ #define __HFI_BUFFER_AR50LT__
+ 
+ #include <linux/types.h>
++#include <linux/minmax.h>
+ #include "hfi_property.h"
+ 
+ typedef u8 HFI_U8;
+diff --git a/sm8450-modules/qcom/opensource/video-driver/driver/variant/iris2/inc/hfi_buffer_iris2.h b/sm8450-modules/qcom/opensource/video-driver/driver/variant/iris2/inc/hfi_buffer_iris2.h
+index 1331c9bb7001a..eacfa85d9350f 100644
+--- a/sm8450-modules/qcom/opensource/video-driver/driver/variant/iris2/inc/hfi_buffer_iris2.h
++++ b/sm8450-modules/qcom/opensource/video-driver/driver/variant/iris2/inc/hfi_buffer_iris2.h
+@@ -7,6 +7,7 @@
+ #define __HFI_BUFFER_IRIS2__
+ 
+ #include <linux/types.h>
++#include <linux/minmax.h>
+ #include "hfi_property.h"
+ 
+ typedef u8 HFI_U8;
 -- 
 2.43.0
