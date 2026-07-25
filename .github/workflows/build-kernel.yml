@@ -77,19 +77,9 @@ jobs:
       - name: Include personal changes
         run: |
           cp -rf aospa-gki-kernel-build/kernel_platform/. kernel_platform
-          cd kernel_platform/xiaomi/sm8450
 
-          : # Fix clang 19 warnings
-          curl https://github.com/LineageOS/android_kernel_xiaomi_sm8450/commit/aea66fe46a3d796d4f85c5979678055438185cbd.patch > clang.patch
-          patch -p1 < clang.patch
-
-          : # Fix clang 21 warnings
-          curl https://github.com/Pzqqt/android_kernel_xiaomi_marble/commit/f4ae922da12b91d0b7a8109ba2851a44c61b0ba6.patch > clang.patch
-          patch -p1 < clang.patch
-          cd ..
-          curl https://github.com/Pzqqt/android_kernel_xiaomi_marble/commit/3e043c16430a95f6d328f5396c14ec18a52ab10a.patch > clang.patch
-          sed -i 's/drivers/sm8450\/drivers/g' clang.patch
-          sed -i 's/techpack\/display/sm8450-modules\/qcom\/opensource\/display-drivers/g' clang.patch
+          : # Fix clang 19 & 21 warnings
+          cd kernel_platform/xiaomi
           patch -p1 < clang.patch
 
       - name: Build kernel
