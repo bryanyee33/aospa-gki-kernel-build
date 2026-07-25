@@ -3,6 +3,7 @@ https://github.com/LineageOS/android_kernel_xiaomi_sm8450/commit/aea66fe46a3d796
 https://github.com/Pzqqt/android_kernel_xiaomi_marble/commit/f4ae922da12b91d0b7a8109ba2851a44c61b0ba6
 https://github.com/Pzqqt/android_kernel_xiaomi_marble/commit/3e043c16430a95f6d328f5396c14ec18a52ab10a
 https://github.com/Pzqqt/android_kernel_xiaomi_marble/commit/518a896d8c0244e3f106e971373b6931135e422f
+https://github.com/Pzqqt/android_kernel_xiaomi_marble/commit/da9332389c00f143a61b7b1d1c15afd45ef1c620
 
 ---
  sm8450/arch/arm64/kvm/Makefile                                                            | 4 ++++
@@ -13,7 +14,9 @@ https://github.com/Pzqqt/android_kernel_xiaomi_marble/commit/518a896d8c0244e3f10
  sm8450/lib/lz4/lz4hc.c                                                                    | 4 ++++
  sm8450-modules/qcom/opensource/video-driver/driver/variant/ar50lt/inc/hfi_buffer_ar50lt.h | 1 +
  sm8450-modules/qcom/opensource/video-driver/driver/variant/iris2/inc/hfi_buffer_iris2.h   | 1 +
- 8 files changed, 16 insertions(+), 4 deletions(-)
+ sm8450-modules/qcom/opensource/video-driver/driver/vidc/src/msm_vidc_driver.c             | 10 +++++-----
+ sm8450-modules/qcom/opensource/video-driver/driver/vidc/src/venus_hfi_response.c          |  6 +++---
+ 10 files changed, 24 insertions(+), 12 deletions(-)
 
 diff --git a/sm8450/arch/arm64/kvm/Makefile b/sm8450/arch/arm64/kvm/Makefile
 index 749a0986a9e3..2b024670b755 100644
@@ -128,5 +131,71 @@ index 1331c9bb7001a..eacfa85d9350f 100644
  #include "hfi_property.h"
  
  typedef u8 HFI_U8;
+diff --git a/sm8450-modules/qcom/opensource/video-driver/driver/vidc/src/msm_vidc_driver.c b/sm8450-modules/qcom/opensource/video-driver/driver/vidc/src/msm_vidc_driver.c
+index 8647efe8f91a9..2649c2a854417 100644
+--- a/sm8450-modules/qcom/opensource/video-driver/driver/vidc/src/msm_vidc_driver.c
++++ b/sm8450-modules/qcom/opensource/video-driver/driver/vidc/src/msm_vidc_driver.c
+@@ -29,7 +29,7 @@
+ extern struct msm_vidc_core *g_core;
+ 
+ #define is_odd(val) ((val) % 2 == 1)
+-#define in_range(val, min, max) (((min) <= (val)) && ((val) <= (max)))
++#define is_in_range(val, min, max) (((min) <= (val)) && ((val) <= (max)))
+ #define COUNT_BITS(a, out) {       \
+ 	while ((a) >= 1) {          \
+ 		(out) += (a) & (1); \
+@@ -5948,8 +5948,8 @@ static bool msm_vidc_allow_image_encode_session(struct msm_vidc_inst *inst)
+ 	min_height = capability->cap[FRAME_HEIGHT].min;
+ 	max_height = capability->cap[FRAME_HEIGHT].max;
+ 	fmt = &inst->fmts[INPUT_PORT];
+-	if (!in_range(fmt->fmt.pix_mp.width, min_width, max_width) ||
+-		!in_range(fmt->fmt.pix_mp.height, min_height, max_height)) {
++	if (!is_in_range(fmt->fmt.pix_mp.width, min_width, max_width) ||
++		!is_in_range(fmt->fmt.pix_mp.height, min_height, max_height)) {
+ 		i_vpr_e(inst, "unsupported wxh [%u x %u], allowed [%u x %u] to [%u x %u]\n",
+ 			fmt->fmt.pix_mp.width, fmt->fmt.pix_mp.height,
+ 			min_width, min_height, max_width, max_height);
+@@ -6075,8 +6075,8 @@ static int msm_vidc_check_resolution_supported(struct msm_vidc_inst *inst)
+ 
+ 	/* check if input width and height is in supported range */
+ 	if (is_decode_session(inst) || is_encode_session(inst)) {
+-		if (!in_range(width, min_width, max_width) ||
+-			!in_range(height, min_height, max_height)) {
++		if (!is_in_range(width, min_width, max_width) ||
++			!is_in_range(height, min_height, max_height)) {
+ 			i_vpr_e(inst,
+ 				"%s: unsupported input wxh [%u x %u], allowed range: [%u x %u] to [%u x %u]\n",
+ 				__func__, width, height, min_width,
+diff --git a/sm8450-modules/qcom/opensource/video-driver/driver/vidc/src/venus_hfi_response.c b/sm8450-modules/qcom/opensource/video-driver/driver/vidc/src/venus_hfi_response.c
+index 9045765400d27..4d23d8943c5fd 100644
+--- a/sm8450-modules/qcom/opensource/video-driver/driver/vidc/src/venus_hfi_response.c
++++ b/sm8450-modules/qcom/opensource/video-driver/driver/vidc/src/venus_hfi_response.c
+@@ -16,7 +16,7 @@
+ #include "msm_vidc_memory.h"
+ #include "msm_vidc_fence.h"
+ 
+-#define in_range(range, val) (((range.begin) < (val)) && ((range.end) > (val)))
++#define is_in_range(range, val) (((range.begin) < (val)) && ((range.end) > (val)))
+ 
+ extern struct msm_vidc_core *g_core;
+ struct msm_vidc_core_hfi_range {
+@@ -1609,7 +1609,7 @@ static int handle_system_response(struct msm_vidc_core *core,
+ 					goto exit;
+ 				goto exit;
+ 			}
+-			if (in_range(be[i], packet->type)) {
++			if (is_in_range(be[i], packet->type)) {
+ 				rc = be[i].handle(core, packet);
+ 				if (rc)
+ 					goto exit;
+@@ -1655,7 +1655,7 @@ static int __handle_session_response(struct msm_vidc_inst *inst,
+ 					__func__, packet->type);
+ 				handle_session_error(inst, packet);
+ 			}
+-			if (in_range(be[i], packet->type)) {
++			if (is_in_range(be[i], packet->type)) {
+ 				dequeue |= (packet->type == HFI_CMD_BUFFER);
+ 				rc = be[i].handle(inst, packet);
+ 				if (rc)
 -- 
 2.43.0
