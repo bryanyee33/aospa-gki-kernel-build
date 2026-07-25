@@ -76,7 +76,7 @@ jobs:
               \' kernel_platform/xiaomi/sm8450/KernelSU/kernel/apk_sign.c
       - name: Include personal changes
         run: |
-          cp -rf aospa-gki-kernel-build/android_kernel_xiaomi_sm8450/. kernel_platform/xiaomi/sm8450
+          cp -rf aospa-gki-kernel-build/kernel_platform/. kernel_platform
           cd kernel_platform/xiaomi/sm8450
 
           : # Fix clang 19 warnings
